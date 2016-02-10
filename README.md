@@ -26,7 +26,10 @@ It uses the concept of cars with tires to generate and send events. The structur
 4. Create 2 SAS tokens to represent the reader and sender
 5. Create a new IoTHub
 6. Copy the connection strings into the app.config file in Settings folder. (Note: all of the programs point to a central config file):
- ```xml
+
+
+
+ ```
 	<add key="Microsoft.ServiceBus.SenderConnectionString" value="Endpoint=sb://SERVICEBUS-NAME.servicebus.windows.net/;SharedAccessKeyName=SENDER-SAS-NAME;SharedAccessKey=SENDER-SAS-KEY" />
 	<add key="Microsoft.ServiceBus.ReaderConnectionString" value="Endpoint=sb://SERVICEBUS-NAME.servicebus.windows.net/;SharedAccessKeyName=READER-SAS-NAME;SharedAccessKey=READER-SAS-KEY" />
 	<add key="Microsoft.IotHub.ConnectionString" value="HostName=IOTHUB-HOSTNAME.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=IOT-HUB-OWNER-SAS-KEY" />
@@ -37,6 +40,8 @@ It uses the concept of cars with tires to generate and send events. The structur
 	<add key="AzureStorage.Key" value="STORAGE-ACCOUNT-KEY" />
 	<add key="AzureStorage.ConnectionString" value="STORAGE-ACCOUNT-CONNECTIONSTRING" />
 ```
+
+
 
 ## To run the demo	
 For the event hub Sender demo, right-click on the TpmsEventHubSender Project and select Debug > Start new instance. This will start the cars and send events to the hub
