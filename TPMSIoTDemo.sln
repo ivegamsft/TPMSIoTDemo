@@ -19,6 +19,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{6A
 		Settings\iv.App.config = Settings\iv.App.config
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3D516DEE-0A09-46DB-B855-71F6DEE1FD80}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,26 +53,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 6
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://inkblotconsulting.visualstudio.com/defaultcollection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = TpmsDemoClasses\\TpmsCommon.csproj
-		SccProjectName1 = TpmsDemoClasses
-		SccLocalPath1 = TpmsDemoClasses
-		SccProjectUniqueName2 = TpmIotHubSender\\TpmsIotHubSender.csproj
-		SccProjectName2 = TpmIotHubSender
-		SccLocalPath2 = TpmIotHubSender
-		SccProjectUniqueName3 = TpmsEventHubReader\\TpmsEventHubReader.csproj
-		SccProjectName3 = TpmsEventHubReader
-		SccLocalPath3 = TpmsEventHubReader
-		SccProjectUniqueName4 = TpmsEventHubSender\\TpmsEventHubSender.csproj
-		SccProjectName4 = TpmsEventHubSender
-		SccLocalPath4 = TpmsEventHubSender
-		SccProjectUniqueName5 = TpmsIotHubRemoveCars\\TpmsIotHubRemoveCars.csproj
-		SccProjectName5 = TpmsIotHubRemoveCars
-		SccLocalPath5 = TpmsIotHubRemoveCars
 	EndGlobalSection
 EndGlobal
