@@ -1,0 +1,73 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TpmsCommon", "TpmsDemoClasses\TpmsCommon.csproj", "{3D8FA023-F487-47E7-A308-EFCF016388AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TpmsIotHubSender", "TpmIotHubSender\TpmsIotHubSender.csproj", "{C2F83EE2-8082-4A06-B99E-734281329E7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TpmsEventHubReader", "TpmsEventHubReader\TpmsEventHubReader.csproj", "{72C7E794-6EA1-40C3-A50E-9417F5939163}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TpmsEventHubSender", "TpmsEventHubSender\TpmsEventHubSender.csproj", "{1585DBA8-370B-4149-8745-5A4CCC374F25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TpmsIotHubRemoveCars", "TpmsIotHubRemoveCars\TpmsIotHubRemoveCars.csproj", "{DD671EBB-95F7-4CE6-A6D0-565636576FD3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{6ACB7294-C62D-46AC-B33E-EA42759B0237}"
+	ProjectSection(SolutionItems) = preProject
+		Settings\App.config = Settings\App.config
+		Settings\iv.App.config = Settings\iv.App.config
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D8FA023-F487-47E7-A308-EFCF016388AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D8FA023-F487-47E7-A308-EFCF016388AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D8FA023-F487-47E7-A308-EFCF016388AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D8FA023-F487-47E7-A308-EFCF016388AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2F83EE2-8082-4A06-B99E-734281329E7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2F83EE2-8082-4A06-B99E-734281329E7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2F83EE2-8082-4A06-B99E-734281329E7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2F83EE2-8082-4A06-B99E-734281329E7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72C7E794-6EA1-40C3-A50E-9417F5939163}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72C7E794-6EA1-40C3-A50E-9417F5939163}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72C7E794-6EA1-40C3-A50E-9417F5939163}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72C7E794-6EA1-40C3-A50E-9417F5939163}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1585DBA8-370B-4149-8745-5A4CCC374F25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1585DBA8-370B-4149-8745-5A4CCC374F25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1585DBA8-370B-4149-8745-5A4CCC374F25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1585DBA8-370B-4149-8745-5A4CCC374F25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD671EBB-95F7-4CE6-A6D0-565636576FD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD671EBB-95F7-4CE6-A6D0-565636576FD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD671EBB-95F7-4CE6-A6D0-565636576FD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD671EBB-95F7-4CE6-A6D0-565636576FD3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://inkblotconsulting.visualstudio.com/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = TpmsDemoClasses\\TpmsCommon.csproj
+		SccProjectName1 = TpmsDemoClasses
+		SccLocalPath1 = TpmsDemoClasses
+		SccProjectUniqueName2 = TpmIotHubSender\\TpmsIotHubSender.csproj
+		SccProjectName2 = TpmIotHubSender
+		SccLocalPath2 = TpmIotHubSender
+		SccProjectUniqueName3 = TpmsEventHubReader\\TpmsEventHubReader.csproj
+		SccProjectName3 = TpmsEventHubReader
+		SccLocalPath3 = TpmsEventHubReader
+		SccProjectUniqueName4 = TpmsEventHubSender\\TpmsEventHubSender.csproj
+		SccProjectName4 = TpmsEventHubSender
+		SccLocalPath4 = TpmsEventHubSender
+		SccProjectUniqueName5 = TpmsIotHubRemoveCars\\TpmsIotHubRemoveCars.csproj
+		SccProjectName5 = TpmsIotHubRemoveCars
+		SccLocalPath5 = TpmsIotHubRemoveCars
+	EndGlobalSection
+EndGlobal
