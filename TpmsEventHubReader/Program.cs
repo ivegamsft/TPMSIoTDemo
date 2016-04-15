@@ -122,7 +122,7 @@ namespace TpmsPressureReaderTest
     {
         static string eventHubConnString = ConfigurationManager.AppSettings["Microsoft.ServiceBus.ReaderConnectionString"];
         static string storageConnString = ConfigurationManager.AppSettings["AzureStorage.ConnectionString"];
-        static string eventHubName = ConfigurationManager.AppSettings["AzureStorage.AccountName"];
+        static string eventHubName = ConfigurationManager.AppSettings["Microsoft.ServiceBus.EventHubName"];
         static string consumerGroupName = ConfigurationManager.AppSettings["Microsoft.ServiceBus.ConsumerGroup"];
         
         static void Main(string[] args)
