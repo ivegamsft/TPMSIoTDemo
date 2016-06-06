@@ -23,7 +23,7 @@ namespace TpmsCarEventHubSender
         static string storageConnString = CloudConfigurationManager.GetSetting("AzureStorage.ConnectionString");
         static string eventHubName = CloudConfigurationManager.GetSetting("Microsoft.ServiceBus.EventHubName");
         static string consumerGroupName = CloudConfigurationManager.GetSetting("Microsoft.ServiceBus.ConsumerGroup");
-        static EventHubClient ehClient = EventHubClient.CreateFromConnectionString(eventHubConnString, CloudConfigurationManager.GetSetting("Microsoft.ServiceBus.EventHubName"));
+        static EventHubClient ehClient = EventHubClient.CreateFromConnectionString(eventHubConnString, eventHubName);
         static string _factoryName = string.Empty;
 
         public static void GenerateCars(string FactoryName, int MaxCars)
