@@ -127,15 +127,22 @@ namespace TpmsPressureReaderTest
         
         static void Main(string[] args)
         {
-            //Use a unique name if you are running more than one
-            var processorId = string.Format("Reader:{0}-{1}", Environment.MachineName, Guid.NewGuid());
-            //var processorId = Environment.MachineName;
+            try
+            {
+                //Use a unique name if you are running more than one
+                var processorId = string.Format("Reader:{0}-{1}", Environment.MachineName, Guid.NewGuid());
+                //var processorId = Environment.MachineName;
 
-            var host = new EventProcessorHost(processorId, eventHubName, consumerGroupName, eventHubConnString, storageConnString);
-            host.RegisterEventProcessorAsync<TpmsPressureProcessor>();
-
-            Console.WriteLine("Begin reading messages with processor id [{0}].", processorId);
-            Console.ReadLine();
+                var host = new EventProcessorHost(processorId, eventHubName, consumerGroupName, eventHubConnString, storageConnString);
+                //host.RegisterEventProcessorAsync<TpmsPressureProcessor>();
+                host.RegisterEventProcessorAsync<TpmsPressureProcessor>().Wait();
+                Console.WriteLine("Begin reading messages with processor id [{0}].", processorId);
+                Console.ReadLine();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An erorr occured registering th reader " + ex.ToString());
+            }
         }
     }
 }

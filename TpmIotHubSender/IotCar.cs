@@ -29,18 +29,25 @@ namespace TpmIotHubSender
 
         public static void CreateCar(string FactoryName)
         {
-            _factoryName = FactoryName; //The car factory name that created this car
-            newCar = CarFactory.CreateCar(FactoryName);
-            string newCarDeviceId = string.Format("{0}-{1}-{2}", FactoryName, newCar.TypeOfCar.ToString(), newCar.Id.ToString());
-            string deviceConnectionString = selfRegisterAndSetConnString(newCarDeviceId).Result;
+            try
+            {
+                _factoryName = FactoryName; //The car factory name that created this car
+                newCar = CarFactory.CreateCar(FactoryName);
+                string newCarDeviceId = string.Format("{0}-{1}-{2}", FactoryName, newCar.TypeOfCar.ToString(), newCar.Id.ToString());
+                string deviceConnectionString = selfRegisterAndSetConnString(newCarDeviceId).Result;
 
-            carClient = DeviceClient.CreateFromConnectionString(deviceConnectionString);
-            // Send an event
-            SendEvent(carClient, newCar, newCar.ReadTires()).Wait();
-            cancelToken = new CancellationTokenSource();
-            // Receive commands
-            Task commands = ReceiveCommands(carClient);
-            Console.WriteLine("Created a new car {0} of type {1}", newCar.Id, newCar.TypeOfCar);
+                carClient = DeviceClient.CreateFromConnectionString(deviceConnectionString);
+                // Send an event
+                SendEvent(carClient, newCar, newCar.ReadTires()).Wait();
+                cancelToken = new CancellationTokenSource();
+                // Receive commands
+                Task commands = ReceiveCommands(carClient);
+                Console.WriteLine("Created a new car {0} of type {1}", newCar.Id, newCar.TypeOfCar);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Could not create car " + ex.ToString());
+            }
 
             while (true)
             {
@@ -192,44 +199,48 @@ namespace TpmIotHubSender
                 if (receivedMessage != null)
                 {
                     messageData = Encoding.ASCII.GetString(receivedMessage.GetBytes());
-                    writeToConsole(string.Format("\t{0}> Received message: {1}", DateTime.Now.ToLocalTime(), messageData), true);
-                    switch (messageData)
-                    {
-                        case "stop":
-                            {
-                                newCar.Stop();
-                                await SendEvent(carClient, newCar, "Stopped the car");
-                                writeToConsole(string.Format("Stopped car {0}", newCar.Id), true);
-                                break;
-                            }
-                        case "nail":
-                            {
-                                int tireToFlatten = new Random().Next(0, 3);
-                                newCar.Tires[tireToFlatten].Flatten();
-                                await SendEvent(carClient, newCar, string.Format("Tire {0} was flattened", tireToFlatten.ToString()));
-                                writeToConsole(string.Format("Tire {0} was flattened", tireToFlatten.ToString()), true);
-                                break;
-                            }
-                        case "miles":
-                            {
-                                await SendEvent(carClient, newCar, string.Format("Odometer reading for car {0} is {1}", newCar.Id.ToString(), newCar.OdometerInMiles.ToString()));
-                                writeToConsole(string.Format("Odometer reading for car {0} is {1}", newCar.Id.ToString(), newCar.OdometerInMiles.ToString()), true);
-                                break;
-                            }
-                        case "replaceflat":
-                            {
-                                newCar.ReplaceFlat();
-                                await SendEvent(carClient, newCar, "Flat replaced on car");
-                                writeToConsole(string.Format("Flat replaced on car {0}", newCar.Id), true);
-                                break;
-                            }
-                        default:
-                            {
-                                newCar.Move(10);
-                                await SendEvent(carClient, newCar, string.Format("Hello from the car {0}", newCar.Id.ToString()));
-                                writeToConsole(string.Format("Hello from the car {0}", newCar.Id.ToString()), true);
-                                break;
-                            }
+                    writeToConsole(string.Format("\t{0}> Beep. Beep. Received message: {1}", DateTime.Now.ToLocalTime(), messageData), true);
+                    if (!string.IsNullOrEmpty(messageData))
+                        {
+                        switch (messageData.ToLower())
+                        {
+                            case "stop":
+                                {
+                                    newCar.Stop();
+                                    await SendEvent(carClient, newCar, "Stopped the car");
+                                    writeToConsole(string.Format("Errrrrr..stopped the car {0}", newCar.Id), true);
+                                    break;
+                                }
+                            case "nail":
+                                {
+                                    int tireToFlatten = new Random().Next(0, 3);
+                                    IVehicleTire tire = newCar.Tires[tireToFlatten];
+                                    newCar.Tires[tireToFlatten].Flatten();
+                                    await SendEvent(carClient, newCar, string.Format("Tire {0} was flattened", tireToFlatten.ToString()));
+                                    writeToConsole(string.Format("Plloooosh...tire {0} was flattened", tireToFlatten.ToString()), true);
+                                    break;
+                                }
+                            case "miles":
+                                {
+                                    await SendEvent(carClient, newCar, string.Format("Odometer reading for car {0} is {1}", newCar.Id.ToString(), newCar.OdometerInMiles.ToString()));
+                                    writeToConsole(string.Format("Varrooom...Odometer reading for car {0} is {1}", newCar.Id.ToString(), newCar.OdometerInMiles.ToString()), true);
+                                    break;
+                                }
+                            case "replaceflat":
+                                {
+                                    newCar.ReplaceFlat();
+                                    await SendEvent(carClient, newCar, "Flat replaced on car");
+                                    writeToConsole(string.Format("Varrooom...Flat replaced on car {0}", newCar.Id), true);
+                                    break;
+                                }
+                            default:
+                                {
+                                    newCar.Move(10);
+                                    await SendEvent(carClient, newCar, string.Format("Hello from the car {0}", newCar.Id.ToString()));
+                                    writeToConsole(string.Format("Don't text and drive. Hello from the car {0}", newCar.Id.ToString()), true);
+                                    break;
+                                }
+                        }
                     }
                     
 
