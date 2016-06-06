@@ -21,7 +21,7 @@ namespace TpmsCarEventHubSender
 
         static string eventHubConnString = CloudConfigurationManager.GetSetting("Microsoft.ServiceBus.SenderConnectionString");
         static string storageConnString = CloudConfigurationManager.GetSetting("AzureStorage.ConnectionString");
-        static string eventHubName = CloudConfigurationManager.GetSetting("AzureStorage.AccountName");
+        static string eventHubName = CloudConfigurationManager.GetSetting("Microsoft.ServiceBus.EventHubName");
         static string consumerGroupName = CloudConfigurationManager.GetSetting("Microsoft.ServiceBus.ConsumerGroup");
         static EventHubClient ehClient = EventHubClient.CreateFromConnectionString(eventHubConnString, CloudConfigurationManager.GetSetting("Microsoft.ServiceBus.EventHubName"));
         static string _factoryName = string.Empty;
