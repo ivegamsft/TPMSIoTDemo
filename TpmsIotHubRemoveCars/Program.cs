@@ -1,17 +1,9 @@
 ﻿using Microsoft.Azure.Devices;
-using Microsoft.Azure.Devices.Client;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace TpmsIotHubRemoveCars
+namespace TPMSIoTDemo.IoTHub
 {
-    
-    
     class Program
     {
         static string _factoryName = string.Empty;

@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using TpmsDemoClasses;
-using System.Net;
-using System.IO;
-using Newtonsoft.Json;
-using Microsoft.ServiceBus.Messaging;
-using System.Threading;
 
-namespace TpmsCarEventHubSender
+namespace TPMSIoTDemo.EventHub
 {
     // To learn more about Microsoft Azure WebJobs SDK, please see http://go.microsoft.com/fwlink/?LinkID=320976
     class Program
@@ -20,11 +9,8 @@ namespace TpmsCarEventHubSender
         {
             //Generate between 1 and 1000 cars and put them on the road
             string factoryId = "Factory-" + Guid.NewGuid().ToString();
-            Functions.GenerateCars(factoryId, (new Random()).Next(1, 1000));
-
-            var host = new JobHost();
-            // The following code ensures that the WebJob will be running continuously
-            host.RunAndBlock();
+            Sender.GenerateCars(factoryId, (new Random()).Next(1, 2));
+            Console.ReadKey();
         }
     }
 }

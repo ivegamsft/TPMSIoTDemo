@@ -2,34 +2,38 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
+using TPMSIoTDemo.Common.Converters;
 
-namespace TpmsDemoClasses
+namespace TPMSIoTDemo.Common
 {
+    //[JsonConverter(typeof(VehicleTireReadingConverter))]
     public class VehicleTireReading
     {
         //Handles the case where the object is being deserialized from a message
         [JsonConstructor]
         public VehicleTireReading()
         {
-            CurrentTires = new List<IVehicleTire>();
+            CurrentTires = new List<BaseVehicleTire>();
         }
-        public VehicleTireReading(IVehicle CurrentVehicle)
+
+        public VehicleTireReading(BaseVehicle CurrentVehicle)
         {
             Id = Guid.NewGuid();
             CurrentTires = CurrentVehicle.Tires;
             ReadingTimeStamp = DateTime.UtcNow;
             CurrrentDistanceTraveled = CurrentVehicle.OdometerInMiles;
-            ReadingId = createReadingHashKey(ReadingTimeStamp, CurrentVehicle.Id);
+            ReadingId = CreateReadingHashKey(ReadingTimeStamp, CurrentVehicle.Id);
             VehicleId = CurrentVehicle.Id;
-            TypeOfCar = CurrentVehicle.VehicleType;
+            VehicleType = CurrentVehicle.VehicleType;
+            VehicleClass = CurrentVehicle.VehicleClass;
             Readings = new List<TireReading>();
             int maxSpeed = 0;
             int lastSpeed = 0;
 
-            foreach (CarTire ct in CurrentTires)
+            foreach (BaseVehicleTire ct in CurrentTires)
             {
                 TireReading currentReading = new TireReading(this, ct);
                 lastSpeed = ct.GetCurrentSpeed();
@@ -55,7 +59,6 @@ namespace TpmsDemoClasses
             set;
         }
 
-        
         public Guid Id
         {
             get;
@@ -86,14 +89,18 @@ namespace TpmsDemoClasses
             get;
             set;
         }
-        public string TypeOfCar { get; set; }
+        
+        public VehicleType VehicleType { get; set; }
+
+        public string VehicleClass { get; set; }
+
         public bool HasFlat {
             get
             {
                 bool hasFlat = false;
                 if (CurrentTires != null)
                 {
-                    foreach (IVehicleTire tire in CurrentTires)
+                    foreach (BaseVehicleTire tire in CurrentTires)
                     {
                         if (tire.IsFlat())
                         {
@@ -107,12 +114,14 @@ namespace TpmsDemoClasses
             set { }
         }
 
-        public List<IVehicleTire> CurrentTires {
+        
+        public List<BaseVehicleTire> CurrentTires
+        {
             get;
             set;
         }
 
-        private string createReadingHashKey(DateTime TimeStamp, Guid VehicleId)
+        private string CreateReadingHashKey(DateTime TimeStamp, Guid VehicleId)
         {
             // Convert the input string to a byte array and compute the hash.
             // Create a new Stringbuilder to collect the bytes

@@ -1,23 +1,18 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
-namespace TpmsDemoClasses
+namespace TPMSIoTDemo.Common
 {
     public class TireReading
     {
-        IVehicleTire _currentTire = null;
-        VehicleTireReading _parentReading = null;
+        readonly BaseVehicleTire _currentTire = null;
+        readonly VehicleTireReading _parentReading = null;
+        
         //Handles the case where the object is being deserialized from a message
-        [JsonConstructor]
         public TireReading()
         {
         }
-        public TireReading(VehicleTireReading Reading, IVehicleTire Tire)
+
+        public TireReading(VehicleTireReading Reading, BaseVehicleTire Tire)
         {
             _parentReading = Reading;
             _currentTire = Tire;
@@ -63,8 +58,11 @@ namespace TpmsDemoClasses
             set;
         }
         public bool IsFlat { get; set; }
+
         public bool IsOverInflated { get; set; }
+
         public bool IsUnderInflated { get; set; }
+
         public string RelativeTireAge { get; set; }
     }
 }

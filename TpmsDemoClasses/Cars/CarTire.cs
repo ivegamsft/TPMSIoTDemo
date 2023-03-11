@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 
-namespace TpmsDemoClasses
+namespace TPMSIoTDemo.Common
 {
-    public class CarTire : IVehicleTire
+    public class CarTire : BaseVehicleTire
     {
         const int MAX_SPEED = 180;
         const int MIN_SPEED = 0;
@@ -15,8 +10,9 @@ namespace TpmsDemoClasses
         int _currentSpeed = 0;
         int _lastPressure = 0;
         Car _currentCar;
-        Random randSpeed = new Random(MAX_SPEED);
-        Random randPressure = new Random();
+        readonly Random RandomSpeed = new Random(MAX_SPEED);
+        readonly Random RandomPressure = new Random();
+
         public CarTire(Car ParentCar, int Position, DateTime InstallationDate)
         {
             Id = Guid.NewGuid();
@@ -24,10 +20,10 @@ namespace TpmsDemoClasses
             _currentCar = ParentCar;
             PositionNumber = Position;
             InstallDate = InstallationDate;
-            initTire();
+            InitTire();
         }
 
-        private void initTire()
+        private void InitTire()
         {
             Diameter = CalcDiameter();
             MaxPressure = CalcMaxPressure();
@@ -39,57 +35,9 @@ namespace TpmsDemoClasses
             DistanceTraveledInMiles = 0;
         }
 
-        public int MaxPressure
-        {
-            get; set;
-        }
-
-        public int MinPressure
-        {
-            get; set;
-        }
-
         public int CurrentPressure
         {
             get; set;
-        }
-
-        public int PositionNumber
-        {
-            get; set;
-        }
-
-        public int MaxSpeedRating
-        {
-            get; set;
-        }
-
-        public int Diameter
-        {
-            get; set;
-        }
-
-        public Guid Id
-        {
-            get; set;
-        }
-
-        public int DistanceTraveledInMiles
-        {
-            get;
-            set;
-        }
-
-        public DateTime InstallDate
-        {
-            get;
-            set;
-        }
-
-        public int MaxDistanceRating
-        {
-            get;
-            set;
         }
 
         public TimeSpan RelativeTireAge
@@ -98,13 +46,7 @@ namespace TpmsDemoClasses
             internal set { }
         }
 
-        public Guid CurrentVehicleId
-        {
-            get;
-            set;
-        }
-
-        public int GetCurrentPressure()
+        public override int GetCurrentPressure()
         {
             //Check to see if we are travleling at speed. Then check the pressure
             int currentPressure = _lastPressure;
@@ -135,7 +77,7 @@ namespace TpmsDemoClasses
             return currentPressure;
         }
 
-        public bool IsUnderInflated()
+        public override bool IsUnderInflated()
         {
             int currentPressure = GetCurrentPressure();
             int minPressure = MinPressure;
@@ -147,12 +89,12 @@ namespace TpmsDemoClasses
             return isUnder;
         }
 
-        public bool IsOverInflated()
+        public override bool IsOverInflated()
         {
             return (GetCurrentPressure() > MaxPressure);
         }
 
-        public bool IsFlat()
+        public override  bool IsFlat()
         {
             int currentPressure = GetCurrentPressure();
             bool isFlat = false;
@@ -163,21 +105,21 @@ namespace TpmsDemoClasses
             return isFlat;
         }
 
-        public TireReading Read(VehicleTireReading ParentReading)
+        public override TireReading Read(VehicleTireReading ParentReading)
         {
             TireReading currentReading = new TireReading(ParentReading, this);
             return currentReading;
         }
 
-        public int GetCurrentSpeed()
+        public override int GetCurrentSpeed()
         {
             return _currentSpeed;
         }
 
-        public int CalcMaxSpeedRating()
+        public override int CalcMaxSpeedRating()
         {
             int maxSpeed;
-            switch (_currentCar.TypeOfCar)
+            switch (Enum.Parse(typeof(CarType), _currentCar.VehicleClass))
             {
                 case CarType.Sedan:
                     {
@@ -206,17 +148,17 @@ namespace TpmsDemoClasses
         }
 
 
-        public int CalcMaxDistanceRating()
+        public override int CalcMaxDistanceRating()
         {
             int maxDistance = Diameter * MaxSpeedRating * 25;
             return maxDistance;
         }
 
-        public int CalcMaxPressure()
+        public override int CalcMaxPressure()
         {
             int maxPressure;
             int diam = Diameter;
-            switch (_currentCar.TypeOfCar)
+            switch (Enum.Parse(typeof(CarType), _currentCar.VehicleClass))
             {
                 case CarType.Sedan:
                     {
@@ -242,10 +184,11 @@ namespace TpmsDemoClasses
             }
             return maxPressure;
         }
-        public int CalcDiameter()
+        
+        public override int CalcDiameter()
         {
             int diam = 13;
-            switch (_currentCar.TypeOfCar)
+            switch (Enum.Parse(typeof(CarType), _currentCar.VehicleClass))
             {
                 case CarType.Sedan:
                     {
@@ -271,10 +214,11 @@ namespace TpmsDemoClasses
             }
             return diam;
         }
-        public int CalcMinPressure()
+
+        public override int CalcMinPressure()
         {
             int minPressure;
-            switch (_currentCar.TypeOfCar)
+            switch (Enum.Parse(typeof(CarType), _currentCar.VehicleClass))
             {
                 case CarType.Sedan:
                     {
@@ -301,7 +245,7 @@ namespace TpmsDemoClasses
             return minPressure;
         }
 
-        public void Move(int CarSpeed)
+        public override void Move(int CarSpeed)
         {
             int newSpeed = CarSpeed;
 
@@ -322,16 +266,16 @@ namespace TpmsDemoClasses
                 _lastSpeed = newSpeed;
             }
             //Update the miles traveled
-            DistanceTraveledInMiles = DistanceTraveledInMiles + CarSpeed;
+            DistanceTraveledInMiles += newSpeed;
         }
 
-        public void Stop()
+        public override void Stop()
         {
             _currentSpeed = 0;
             _lastSpeed = 0;
         }
 
-        public void Slow(int Increment)
+        public override void Slow(int Increment)
         {
             int newSpeed = _lastSpeed - Increment;
             _currentSpeed = newSpeed;
@@ -342,18 +286,18 @@ namespace TpmsDemoClasses
             _lastSpeed = _currentSpeed;
         }
 
-        public TimeSpan CalcRelativeTireAge()
+        public override TimeSpan CalcRelativeTireAge()
         {
             int currentMiles = DistanceTraveledInMiles;
             TimeSpan tireAge = (InstallDate - DateTime.Now);
             TimeSpan currentRelativeAge = new TimeSpan();
-            TimeSpan agePenalty = calcAgePenalty();
+            TimeSpan agePenalty = CalcAgePenalty();
                        
             currentRelativeAge = tireAge.Add(agePenalty);
             return currentRelativeAge;
         }
 
-        private TimeSpan calcAgePenalty()
+        private TimeSpan CalcAgePenalty()
         {
             TimeSpan agePenalty = new TimeSpan();
             int currentMiles = DistanceTraveledInMiles;
@@ -378,9 +322,9 @@ namespace TpmsDemoClasses
             return agePenalty;
         }
 
-        public void AddPressure(int Increment)
+        public override void AddPressure(int Increment)
         {
-            CurrentPressure = CurrentPressure + Increment;
+            CurrentPressure += Increment;
             if (CurrentPressure > (MaxPressure + 20))
             {
                 //If the pressure is increased too much, it will cause a flat
@@ -388,16 +332,16 @@ namespace TpmsDemoClasses
             }
         }
 
-        public void DecreasePressure(int Increment)
+        public override void DecreasePressure(int Increment)
         {
-            CurrentPressure = CurrentPressure - Increment;
+            CurrentPressure -= Increment;
             if (CurrentPressure < 0)
             {
                 CurrentPressure = 0;
             }
         }
 
-        public void Flatten()
+        public override void Flatten()
         {
             CurrentPressure = 0;
         }

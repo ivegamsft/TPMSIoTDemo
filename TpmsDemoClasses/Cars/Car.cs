@@ -1,35 +1,38 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TpmsDemoClasses
+namespace TPMSIoTDemo.Common
 {
 
-    public class Car : IVehicle
+    public class Car : BaseVehicle
     {
-        string _carType = string.Empty;
+        readonly List<CarTire> _tires = new List<CarTire>();
+        TimeSpan _TimeInMotion = TimeSpan.Zero;
+        DateTime LastStartTime; 
         int _maxSpeed = 0;
         int _lastSpeed = 0;
         //int _currentSpeed = 0;
 
-        public Car(string CarMaker, CarType NewCarType)
+        public Car(string CarMaker, string CarClass)
         {
-            initCar(CarMaker, NewCarType);
+            InitCar(CarMaker, CarClass);
         }
 
-        void initCar(string CarMaker, CarType NewCarType)
+        private void InitCar(string CarMaker, string CarClass)
         {
             Id = Guid.NewGuid();
-            TypeOfCar = NewCarType;
+            VehicleType = VehicleType.Car;
+            VehicleClass = CarClass;
             FactoryName = CarMaker;
-            _maxSpeed = calcMaxSpeed();
+            _maxSpeed = CalcMaxSpeedForVehicleType();
+            CreationDate = DateTime.UtcNow;
             CurrentSpeed = 0;
             _lastSpeed = 0;
             DateTime installDate = DateTime.UtcNow;
-            Tires = new List<IVehicleTire>();
+            Tires = _tires.Cast<BaseVehicleTire>().ToList();
             for (int i = 0; i < 4; i++)
             {
                 //Create 4 tires
@@ -37,55 +40,13 @@ namespace TpmsDemoClasses
                 Tires.Add(newTire);
             }
         }
-        public Guid Id
-        {
-            get; set;
-        }
 
-        public CarType TypeOfCar
-        {
-            get; set;
-        }
-
-        [JsonIgnore]
-        public List<IVehicleTire> Tires
-        {
-            get; set;
-        }
         public int CurrentSpeed { get; private set; }
 
-        public int OdometerInMiles
-        {
-            get;
-            set;
-        }
-
-        public string VehicleType
-        {
-            get
-            {
-                return TypeOfCar.ToString();
-            }
-
-            set {}
-        }
-
-        public string FactoryName
-        {
-            get;
-            set;
-        }
-
-        public VehicleState State
-        {
-            get;
-            set;
-        }
-
-        int calcMaxSpeed()
+        int CalcMaxSpeedForVehicleType()
         {
             int maxSpeed;
-            switch (TypeOfCar)
+            switch (Enum.Parse(typeof(CarType), VehicleClass))
             {
                 case CarType.Sedan:
                     {
@@ -116,33 +77,42 @@ namespace TpmsDemoClasses
         {
             if (Position >= 0 || Position < 3)
             {
-                IVehicleTire tire = Tires[Position];
+                BaseVehicleTire tire = Tires[Position];
                 tire.AddPressure(Increment);
             }
         }
 
-        public int CalcMaxSpeed()
+        public int CalcMaxTireSpeed()
         {
-            int maxSpeed = 0; //Make this very high. This will reset with the max tire rating
-            int maxTireSpeed = 0;
-            foreach(CarTire ct in Tires)
+            int maxTireSpeed = 0; //This will reset with the max tire rating
+            
+           // var min = (from ct in Tires where ct.CalcMaxSpeedRating() > 0 select ct).Min();
+
+            foreach (CarTire ct in Tires)
             {
-                //The max speed is the lowest of all of the tire ratings
+                //The max speed is the lowest of all of the tire ratings in case of a flat or bad tire
                 maxTireSpeed = ct.CalcMaxSpeedRating();
-                if (maxTireSpeed <= maxSpeed)
+                if (maxTireSpeed <= _maxSpeed)
                 {
-                    maxSpeed = maxTireSpeed;
+                    _maxSpeed = maxTireSpeed;
                 }
             }
-            return maxSpeed;
+            return maxTireSpeed;
         }
 
-        public void Move(int Increment)
+        public override void Move(int Increment)
         {
             //Make the car move and continue moving until it reaches max speed
+            if (State == VehicleState.Stopped || State == VehicleState.Parked)
+            {
+                LastStartTime = DateTime.UtcNow;
+                State = VehicleState.Moving;
+            }
+            _TimeInMotion  = DateTime.UtcNow - LastStartTime;
             int newSpeed = Increment + _lastSpeed;
             CurrentSpeed = newSpeed;
-            OdometerInMiles = OdometerInMiles + Increment;
+            //Distance = speed * time
+            OdometerInMiles = CurrentSpeed * _TimeInMotion.Hours;
 
             if (newSpeed > _maxSpeed)
             {
@@ -155,14 +125,13 @@ namespace TpmsDemoClasses
             }
 
             _lastSpeed = CurrentSpeed;
-            State = VehicleState.Moving;
         }
 
-        public void ReplaceFlat()
+        public override void ReplaceFlat()
         {
             int replacementTirePos = int.MinValue;
             CarTire newTire = null;
-            List<IVehicleTire> newTires = new List<IVehicleTire>();
+            List<BaseVehicleTire> newTires = new List<BaseVehicleTire>();
 
             foreach (CarTire ct in Tires)
             {
@@ -192,21 +161,22 @@ namespace TpmsDemoClasses
         {
             if (Position >= 0 || Position < 3)
             {
-                IVehicleTire tire = Tires[Position];
+                BaseVehicleTire tire = Tires[Position];
                 tire.DecreasePressure(Increment);
             }
         }
 
-        public void Stop()
+        public override void Stop()
         {
             foreach (CarTire ct in Tires)
             {
                 ct.Stop();
             }
             State = VehicleState.Stopped;
+            _TimeInMotion = TimeSpan.Zero;
         }
 
-        public void Slow(int Increment)
+        public override void Slow(int Increment)
         {
             //slow the car down
             foreach (CarTire ct in Tires)
@@ -216,7 +186,7 @@ namespace TpmsDemoClasses
             }
         }
 
-        public VehicleTireReading ReadTires()
+        public override VehicleTireReading ReadTires()
         {
             VehicleTireReading currentReading = new VehicleTireReading(this);
             return currentReading;

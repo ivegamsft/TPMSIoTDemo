@@ -6,10 +6,10 @@ using Microsoft.Azure.Devices;
 using Microsoft.Azure.Devices.Client;
 using System.Configuration;
 using Newtonsoft.Json;
-using TpmsDemoClasses;
+using TPMSIoTDemo.Common;
 using System.Threading;
 
-namespace TpmIotHubSender
+namespace TPMSIoTDemo.IoTHub
 {
     class Program
     {
