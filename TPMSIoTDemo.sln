@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TpmsCommon", "TpmsDemoClasses\TpmsCommon.csproj", "{3D8FA023-F487-47E7-A308-EFCF016388AD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TpmsCommon", "TpmsCommon\TpmsCommon.csproj", "{3D8FA023-F487-47E7-A308-EFCF016388AD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TpmsIotHubSender", "TpmIotHubSender\TpmsIotHubSender.csproj", "{C2F83EE2-8082-4A06-B99E-734281329E7C}"
 EndProject
