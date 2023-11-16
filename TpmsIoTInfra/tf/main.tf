@@ -2,17 +2,16 @@
 #Run terraform output deployment_info to view
 output "deployment_info" {
   value = ({
-    resource_group_name    = module.base_rg.rg.name,
-    region                 = module.base_rg.rg.region,
-    storage_account        = module.storage.stg.storage_account.name,
-    storage_account_key    = module.storage.stg.storage_account.primary_access_key,
-    eventhub_name          = module.eventhub.eh.name,
-    eventhub_id            = module.eventhub.eh.id,
-    eventhub_namespace     = module.eventhub.eh.namespace.name,
-    eventhub_partition_ids = module.eventhub.eh.partition_ids,
-    eventhub_listen_key    = module.eventhub.eh.listen_auth_rule.primary_connection_string,
-    eventhub_manage_key    = module.eventhub.eh.manage_auth_rule.primary_connection_string,
-    eventhub_sender_key    = module.eventhub.eh.sender_auth_rule.primary_connection_string
+    resource_group_name               = module.base_rg.rg.name,
+    region                            = module.base_rg.rg.region,
+    storage_account                   = module.storage.stg.storage_account.name,
+    storage_account_key               = module.storage.stg.storage_account.primary_access_key,
+    storage_account_connection_string = module.storage.stg.storage_account.primary_connection_string,
+    eventhub_namespace                = module.eventhub.eh.namespace.name,
+    eventhub_name                     = module.eventhub.eh.name,
+    eventhub_manage_key               = module.eventhub.eh.manage_auth_rule.primary_connection_string,
+    eventhub_sender_key               = module.eventhub.eh.sender_auth_rule.primary_connection_string,
+    eventhub_listen_key               = module.eventhub.eh.listen_auth_rule.primary_connection_string,
   })
   sensitive = true
 }
