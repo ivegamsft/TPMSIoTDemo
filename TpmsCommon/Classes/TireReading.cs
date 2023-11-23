@@ -46,13 +46,13 @@ namespace TPMSIoTDemo.Common
             set;
         }
 
-        public int CurrentSpeed
+        public double CurrentSpeed
         {
             get;
             set;
         }
 
-        public int CurrrentDistanceTraveled
+        public double CurrrentDistanceTraveled
         {
             get;
             set;

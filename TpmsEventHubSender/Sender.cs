@@ -30,7 +30,7 @@ namespace TPMSIoTDemo.EventHub
             // Keep sending.
             while (true)
             {
-                int currentSpeed = 0;
+                double currentSpeed = 0;
                 //Speed it up
                 Console.WriteLine("Speed up the cars");
                 VehicleTireReading currentReading;

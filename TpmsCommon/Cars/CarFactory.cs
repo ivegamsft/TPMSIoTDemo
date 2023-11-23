@@ -20,7 +20,7 @@ namespace TPMSIoTDemo.Common
             string CarClass = _carTypes[nextTypeIdx];
             //CarType newCarType = (CarType) Enum.Parse(typeof(CarType), _carType);
             Car newCar = new Car(Factory, CarClass);
-            foreach (CarTire ct in newCar.Tires)
+            foreach (CarTire ct in newCar.Tires.Cast<CarTire>())
             {
                 //DO something for each tire if we have to
             }

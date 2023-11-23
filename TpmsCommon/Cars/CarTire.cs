@@ -6,10 +6,10 @@ namespace TPMSIoTDemo.Common
     {
         const int MAX_SPEED = 180;
         const int MIN_SPEED = 0;
-        int _lastSpeed = 0;
-        int _currentSpeed = 0;
+        double _lastSpeed = 0;
+        double _currentSpeed = 0;
         int _lastPressure = 0;
-        Car _currentCar;
+        readonly Car _currentCar;
         readonly Random RandomSpeed = new Random(MAX_SPEED);
         readonly Random RandomPressure = new Random();
 
@@ -48,12 +48,11 @@ namespace TPMSIoTDemo.Common
 
         public override int GetCurrentPressure()
         {
-            //Check to see if we are travleling at speed. Then check the pressure
-            int currentPressure = _lastPressure;
-            int currentSpeed = GetCurrentSpeed();
-            int currentMiles = DistanceTraveledInMiles;
+            double currentSpeed = GetCurrentSpeed();
 
-            if (currentSpeed == 0)
+            //Check to see if we are travleling at speed. Then check the pressure
+            int currentPressure;
+            if (currentSpeed == MIN_SPEED)
             {
                 //We are stopped, just return the pressure reading
                 currentPressure = CurrentPressure;
@@ -80,8 +79,8 @@ namespace TPMSIoTDemo.Common
         public override bool IsUnderInflated()
         {
             int currentPressure = GetCurrentPressure();
-            int minPressure = MinPressure;
             bool isUnder = false;
+
             if (currentPressure < 0 || currentPressure < MinPressure)
             {
                 isUnder = true;
@@ -111,7 +110,7 @@ namespace TPMSIoTDemo.Common
             return currentReading;
         }
 
-        public override int GetCurrentSpeed()
+        public override double GetCurrentSpeed()
         {
             return _currentSpeed;
         }
@@ -187,7 +186,7 @@ namespace TPMSIoTDemo.Common
         
         public override int CalcDiameter()
         {
-            int diam = 13;
+            int diam;
             switch (Enum.Parse(typeof(CarType), _currentCar.VehicleClass))
             {
                 case CarType.Sedan:
@@ -245,9 +244,9 @@ namespace TPMSIoTDemo.Common
             return minPressure;
         }
 
-        public override void Move(int CarSpeed)
+        public override void Move(double CarSpeed)
         {
-            int newSpeed = CarSpeed;
+            double newSpeed = CarSpeed;
 
             //If we have a flat tire. we cannot go very fast
             if (IsFlat())
@@ -275,9 +274,9 @@ namespace TPMSIoTDemo.Common
             _lastSpeed = 0;
         }
 
-        public override void Slow(int Increment)
+        public override void Slow(double Increment)
         {
-            int newSpeed = _lastSpeed - Increment;
+            double newSpeed = _lastSpeed - Increment;
             _currentSpeed = newSpeed;
             if (newSpeed < 0)
             {
@@ -288,20 +287,17 @@ namespace TPMSIoTDemo.Common
 
         public override TimeSpan CalcRelativeTireAge()
         {
-            int currentMiles = DistanceTraveledInMiles;
             TimeSpan tireAge = (InstallDate - DateTime.Now);
-            TimeSpan currentRelativeAge = new TimeSpan();
             TimeSpan agePenalty = CalcAgePenalty();
-                       
-            currentRelativeAge = tireAge.Add(agePenalty);
+            TimeSpan currentRelativeAge = tireAge.Add(agePenalty);
+
             return currentRelativeAge;
         }
 
         private TimeSpan CalcAgePenalty()
         {
             TimeSpan agePenalty = new TimeSpan();
-            int currentMiles = DistanceTraveledInMiles;
-            int penaltyMiles = DistanceTraveledInMiles - MaxDistanceRating;
+            double penaltyMiles = DistanceTraveledInMiles - MaxDistanceRating;
 
             if (penaltyMiles > 0 && DistanceTraveledInMiles < MaxDistanceRating)
             {

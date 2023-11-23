@@ -1,18 +1,21 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Azure.Devices;
+using Microsoft.Azure.Devices.Client;
+using Microsoft.Azure.Devices.Common;
+using Newtonsoft.Json;
 using System;
 using System.Configuration;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using TPMSIoTDemo.Common;
 
 namespace TPMSIoTDemo.IoTHub
 {
     public class IotCar
     {
-        static string _factoryName = string.Empty;
-        static string iotHubConnString = ConfigurationManager.AppSettings["Microsoft.IotHub.ConnectionString"];
-        static string iotHubName = ConfigurationManager.AppSettings["Microsoft.IotHub.Name"];
+        private static string _factoryName = string.Empty;
+        static readonly string iotHubConnString = ConfigurationManager.AppSettings["Microsoft.IotHub.ConnectionString"];
+        static readonly string iotHubName = ConfigurationManager.AppSettings["Microsoft.IotHub.Name"];
         // Define the connection string to connect to IoT Hub
         static RegistryManager registryManager;
         static DeviceClient carClient = null;
@@ -27,7 +30,7 @@ namespace TPMSIoTDemo.IoTHub
         {
             _factoryName = FactoryName; //The car factory name that created this car
             newCar = CarFactory.CreateCar(FactoryName);
-            string newCarDeviceId = string.Format("{0}-{1}-{2}", FactoryName, newCar.TypeOfCar.ToString(), newCar.Id.ToString());
+            string newCarDeviceId = string.Format("{0}-{1}-{2}", FactoryName, newCar.VehicleType.ToString(), newCar.Id.ToString());
             string deviceConnectionString = SelfRegisterAndSetConnString(newCarDeviceId).Result;
             string iotHubConString = Microsoft.Azure.Devices.IotHubConnectionStringBuilder.Create(iotHubConnString).ToString();
 
@@ -37,16 +40,16 @@ namespace TPMSIoTDemo.IoTHub
             cancelToken = new CancellationTokenSource();
             // Receive commands
             Task commands = ReceiveCommands(carClient);
-            Console.WriteLine("Created a new car {0} of type {1}", newCar.Id, newCar.TypeOfCar);
+            Console.WriteLine("Created a new car {0} of type {1}", newCar.Id, newCar.VehicleType);
 
             while (true)
             {
-                int currentSpeed = 0;
+                double currentSpeed = 0;
                 int maxSpeed = 0;
                 VehicleTireReading currentReading;
                 foreach (Car currentCar in CarFactory.Cars)
                 {
-                    maxSpeed = currentCar.CalcMaxSpeed();
+                    maxSpeed = currentCar.CalcMaxTireSpeed();
                     do
                     {
                         if (currentCar.State == VehicleState.Moving)
@@ -124,7 +127,9 @@ namespace TPMSIoTDemo.IoTHub
 
                 await registryManager.AddDeviceAsync(newDevice);
                 newDevice = await registryManager.GetDeviceAsync(DeviceId);
+#pragma warning disable CS0618 // Type or member is obsolete
                 newDevice.Authentication.SymmetricKey.PrimaryKey = CryptoKeyGenerator.GenerateKey(32);
+#pragma warning restore CS0618 // Type or member is obsolete
                 newDevice.Authentication.SymmetricKey.SecondaryKey = CryptoKeyGenerator.GenerateKey(32);
                 newDevice = await registryManager.UpdateDeviceAsync(newDevice);
 
@@ -200,11 +205,16 @@ namespace TPMSIoTDemo.IoTHub
                             }
                         case "nail":
                             {
-                                bool flattenedTire = false;
+                                bool isTireFlat = false;
                                 int MAX_NUM_TIRES = 4;
                                 do
                                 {
-                                    if (numflatTires == MAX_NUM_TIRES) { flattenedTire = true; break; }
+                                    if (numflatTires == MAX_NUM_TIRES) {
+                                        await SendEvent(carClient, newCar, string.Format("All tires are flat"));
+                                        WriteToConsole(string.Format("All tires are flat"), true);
+                                        break; 
+                                    }
+
                                     for (int i = 0; i < 3; i++)
                                     {
                                         int tireToFlatten = randomTire.Next(0, MAX_NUM_TIRES);
@@ -214,19 +224,19 @@ namespace TPMSIoTDemo.IoTHub
                                             newCar.Tires[tireToFlatten].Flatten();
                                             numflatTires++;
                                             await SendEvent(carClient, newCar, string.Format("Tire {0} was flattened", tireToFlatten.ToString()));
-                                            flattenedTire = true;
+                                            isTireFlat = true;
                                             WriteToConsole(string.Format("Tire {0} was flattened", tireToFlatten.ToString()), true);
                                             break;
                                         }
                                     }
                                 }
-                                while (flattenedTire != true);
+                                while (isTireFlat != true);
 
-                                if (numflatTires == MAX_NUM_TIRES)
-                                {
-                                    WriteToConsole(string.Format("All tires are already flat"), true);
-                                    flattenedTire = true;
-                                }
+                                //if (numflatTires == MAX_NUM_TIRES)
+                                //{
+                                //    WriteToConsole(string.Format("All tires are already flat"), true);
+                                //    isTireFlat = true;
+                                //}
                                 break;
                             }
                         case "miles":
@@ -274,7 +284,7 @@ namespace TPMSIoTDemo.IoTHub
 
         private static void WriteToConsole(VehicleTireReading currentReading, Car currentCar)
         {
-            Console.WriteLine("ReadingId={0};Factory={1};VehicleType={2};Speed={3};Miles={4}", currentReading.ReadingId, currentCar.FactoryName, currentCar.TypeOfCar, currentReading.CurrentSpeed, currentReading.CurrrentDistanceTraveled);
+            Console.WriteLine("ReadingId={0};Factory={1};VehicleType={2};Speed={3};Miles={4}", currentReading.ReadingId, currentCar.FactoryName, currentCar.VehicleType, currentReading.CurrentSpeed, currentReading.CurrrentDistanceTraveled);
         }
     }
 }

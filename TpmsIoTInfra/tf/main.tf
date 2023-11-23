@@ -59,3 +59,9 @@ module "eventhub" {
   eventhub_sku_tier = "Standard"
   tags              = local.tags
 }
+
+//Add steam analytics module
+
+//add iot hub
+
+//add fabric module

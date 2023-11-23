@@ -12,8 +12,8 @@ namespace TPMSIoTDemo.Common
         readonly List<CarTire> _tires = new List<CarTire>();
         TimeSpan _TimeInMotion = TimeSpan.Zero;
         DateTime LastStartTime; 
-        int _maxSpeed = 0;
-        int _lastSpeed = 0;
+        double _maxSpeed = 0;
+        double _lastSpeed = 0;
         //int _currentSpeed = 0;
 
         public Car(string CarMaker, string CarClass)
@@ -41,7 +41,7 @@ namespace TPMSIoTDemo.Common
             }
         }
 
-        public int CurrentSpeed { get; private set; }
+        public double CurrentSpeed { get; private set; }
 
         int CalcMaxSpeedForVehicleType()
         {
@@ -100,7 +100,7 @@ namespace TPMSIoTDemo.Common
             return maxTireSpeed;
         }
 
-        public override void Move(int Increment)
+        public override void Move(double Increment)
         {
             //Make the car move and continue moving until it reaches max speed
             if (State == VehicleState.Stopped || State == VehicleState.Parked)
@@ -109,19 +109,23 @@ namespace TPMSIoTDemo.Common
                 State = VehicleState.Moving;
             }
             _TimeInMotion  = DateTime.UtcNow - LastStartTime;
-            int newSpeed = Increment + _lastSpeed;
+            double newSpeed = Increment + _lastSpeed;
             CurrentSpeed = newSpeed;
-            //Distance = speed * time
-            OdometerInMiles = CurrentSpeed * _TimeInMotion.Hours;
-
+            
+            //Set the max speed here
             if (newSpeed > _maxSpeed)
             {
                 CurrentSpeed = _maxSpeed;
             }
 
-            foreach (CarTire ct in Tires)
+            //Distance = speed * time
+            //1 mile / second = 3600 miles / hour
+            //Calc the current miles per second
+            OdometerInMiles += Math.Round(CurrentSpeed/3600 * _TimeInMotion.Seconds, MidpointRounding.AwayFromZero);
+
+            foreach (CarTire ct in Tires.Cast<CarTire>())
             {
-                ct.Move(newSpeed);
+                ct.Move(CurrentSpeed);
             }
 
             _lastSpeed = CurrentSpeed;
@@ -176,7 +180,7 @@ namespace TPMSIoTDemo.Common
             _TimeInMotion = TimeSpan.Zero;
         }
 
-        public override void Slow(int Increment)
+        public override void Slow(double Increment)
         {
             //slow the car down
             foreach (CarTire ct in Tires)

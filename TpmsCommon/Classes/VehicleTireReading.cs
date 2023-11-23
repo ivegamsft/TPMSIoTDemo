@@ -31,7 +31,7 @@ namespace TPMSIoTDemo.Common
             VehicleClass = CurrentVehicle.VehicleClass;
             Readings = new List<TireReading>();
             int maxSpeed = 0;
-            int lastSpeed = 0;
+            double lastSpeed = 0;
 
             foreach (BaseVehicleTire ct in CurrentTires)
             {
@@ -78,13 +78,13 @@ namespace TPMSIoTDemo.Common
         }
                 
 
-        public int CurrentSpeed
+        public double CurrentSpeed
         {
             get;
             set;
         }
 
-        public int CurrrentDistanceTraveled
+        public double CurrrentDistanceTraveled
         {
             get;
             set;
